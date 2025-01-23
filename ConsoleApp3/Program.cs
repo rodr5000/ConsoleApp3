@@ -50,7 +50,7 @@ public class Program
         q3.Insert(5);
         q3.Insert(6);
         q3.Insert(7);
-        q3 = OrderQ(q3, 2);
+        q3 = OrderQ(q3, 8);
 
         Console.WriteLine(q3);
 
@@ -191,12 +191,15 @@ public class Program
         Queue<int> orderq = new Queue<int>();
         int lastNum = 0;
         int currItem;
+        int legnth=0;
+        int count=0;
 
         //בודק מהו המספר האחרון בתור
 
         while (!copyq2.IsEmpty())
         {
             lastNum = copyq2.Remove();
+            legnth++;
         }
 
         while (!copyq.IsEmpty())
@@ -207,6 +210,11 @@ public class Program
             if (currItem < num)
             {
                 orderq.Insert(currItem);
+                count++;
+                if (count == legnth) 
+                {
+                    orderq.Insert(num);
+                }
             }
             else
             {
