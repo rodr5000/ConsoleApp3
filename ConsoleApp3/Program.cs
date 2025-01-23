@@ -1,5 +1,8 @@
-﻿namespace QLab;
+﻿using QueueLab;
+
+namespace QLab;
 public class Program
+//רועי עלימה יא'3 18/01/2025 20:53
 
 {
     public static void Main(string[] args)
@@ -37,13 +40,41 @@ public class Program
         Console.WriteLine(q);
         Console.WriteLine(qCopy);
 
+        Console.WriteLine(IsNumInQ(q, 7));
+
+        Queue<int> q3 = new Queue<int>();
+
+        q3.Insert(1);
+        q3.Insert(3);
+        q3.Insert(4);
+        q3.Insert(5);
+        q3.Insert(6);
+        q3.Insert(7);
+        q3 = OrderQ(q3, 2);
+
+        Console.WriteLine(q3);
+
+        Student s1 = new Student(91, "Lior");
+        Student s2 = new Student(90, "Roei");
+        Student s3 = new Student(92, "Eyal");
+        Student s4 = new Student(93, "Mark");
+
+        Queue<Student> q4 = new Queue<Student>();
+        q4.Insert(s2);
+        q4.Insert(s3);
+        q4.Insert(s4);
+
+        q4 = QueueStu(q4, s1);
+
+        Console.WriteLine(q4);
+
     }
 
-    public static Queue<int> SetQCopy(Queue<int> q)
+    public static Queue<T> SetQCopy<T>(Queue<T> q)
     {
-        Queue<int> qCopy = new();
-        Queue<int> qTemp = new();
-        int currItem;
+        Queue<T> qCopy = new();
+        Queue<T> qTemp = new();
+        T currItem;
         //פריקת התור המקורי ויצירת תור העתק ותור זמני
         while (!q.IsEmpty())
         {
@@ -59,25 +90,29 @@ public class Program
         return qCopy;
     }
 
-    public static bool CheckAround(Queue<int> q, int place) 
+    //פונקציה של השאלה השנייה
+    public static bool CheckAround(Queue<int> q, int place)
     {
-        
+
         bool check = false;
         int right = 0;
         int sum = 0;
         int current = 0;
         Queue<int> qCopy = SetQCopy(q);
         Queue<int> qCopy2 = SetQCopy(q);
-        int count = 0;
+        int Length = 0;
 
-        while (!qCopy2.IsEmpty()) 
+        //מחשב את אורך התור
+        while (!qCopy2.IsEmpty())
         {
-            count++;
+            Length++;
             qCopy2.Remove();
         }
 
-        if (place < count && place > 1)
+
+        if (place < Length && place > 1)
         {
+            //מחפש את המספר מצד ימין
             for (int i = 1; i < place; i++)
             {
                 right = qCopy.Remove();
@@ -96,36 +131,165 @@ public class Program
         return check;
     }
 
-    public static bool CheckQPerfect(Queue<int> q) 
+    //פונקציה של השאלה השלישית
+    public static bool CheckQPerfect(Queue<int> q)
     {
         Queue<int> qCopy = SetQCopy(q);
         int length = 0;
         int count = 0;
 
-        while (!qCopy.IsEmpty()) 
+        //בודק את אורך התור
+        while (!qCopy.IsEmpty())
         {
             length++;
             qCopy.Remove();
         }
 
-        for (int place = 2; place < length; place++) 
+        for (int place = 2; place < length; place++)
         {
-            if (CheckAround(q, place)) 
+            if (CheckAround(q, place))
             {
                 count++;
             }
         }
+
+        //בודק אם בכל התור יש מספרים שלמים
         if (count == length - 2)
         {
             return true;
         }
-        else 
+        else
         {
             return false;
         }
+    }
 
+    //פונקציה של השאלה הראשונה
+    public static bool IsNumInQ(Queue<int> q, int num)
+    {
+        Queue<int> copyq = SetQCopy(q);
+        bool check = false;
+
+        //מפרק את התור ובודק אם כל מספר בתור שווה למספר המקובל 
+        while (!copyq.IsEmpty())
+        {
+            int currItem = copyq.Remove();
+            if (currItem == num)
+            {
+                check = true;
+            }
+        }
+        return check;
 
     }
 
+    //פונקציה של השאלה הרביעית
+    public static Queue<int> OrderQ(Queue<int> q, int num)
+    {
+        Queue<int> copyq = SetQCopy(q);
+        Queue<int> copyq2 = SetQCopy(q);
+        Queue<int> orderq = new Queue<int>();
+        int lastNum = 0;
+        int currItem;
+
+        //בודק מהו המספר האחרון בתור
+
+        while (!copyq2.IsEmpty())
+        {
+            lastNum = copyq2.Remove();
+        }
+
+        while (!copyq.IsEmpty())
+        {
+            currItem = copyq.Remove();
+
+            //בודק אם המספר המקובל יותר גדול מהמספר בראש התור
+            if (currItem < num)
+            {
+                orderq.Insert(currItem);
+            }
+            else
+            {
+                orderq.Insert(num);
+                orderq.Insert(currItem);
+                num = lastNum + 1;
+            }
+        }
+        q = orderq;
+
+        return q;
+    }
+
+    public static Queue<Student> QueueStu(Queue<Student> q, Student s1)
+    {
+        Queue<Student> qCopy = SetQCopy(q);
+        Queue<Student> qCopy2 = SetQCopy(q);
+        int count = 0;
+        int legnth = 0;
+        int count2 = 0;
+
+        //בודק את גודל התור
+        while (!qCopy2.IsEmpty()) 
+        {
+            legnth++;
+            qCopy2.Remove();
+        }
+
+        while (!qCopy.IsEmpty()) 
+        {
+            count2++;
+            Student currS = qCopy.Remove();
+            Student nextS;
+
+            //בודק אם אין יותר ראש בתור
+            if (count2 == legnth)
+            {
+                nextS = new Student(0, "0");
+            }
+            else 
+            {
+                nextS = qCopy.Head();
+            }
+
+            //בודק אם ציון התלמיד החדש קטן יותר משל התלמידים בתור
+            if (currS.GetGrade() > s1.GetGrade())
+            {
+                qCopy2.Insert(currS);
+
+                //למקרה ולתלמיד החדש יש את הציון הכי קטן
+                count++;
+            }
+            //בודק אם הציון של התלמיד החדש יותר גדול מאשר התלמיד העכשוי בתור
+            else if (currS.GetGrade() < s1.GetGrade() )
+            {
+                qCopy2.Insert(currS);
+
+                //בודק אם הציון של התלמיד הבא בתור יותר גדול מהציון של התלמיד הבא
+                if (nextS.GetGrade() > s1.GetGrade() && nextS.GetGrade() != 0)
+                {
+                    qCopy2.Insert(s1);
+                }
+                //במקרה ואין תלמיד נוסף בתור
+                else if(count2 == legnth)
+                {
+                    qCopy2.Insert(s1);
+                }
+            }
+
+ 
+        }
+        while (!qCopy2.IsEmpty()) 
+        {
+            if (count == legnth) 
+            {
+                qCopy.Insert(s1);
+                count = 0;
+            }
+            qCopy.Insert(qCopy2.Remove());
+        }
+        q = qCopy;
+        return q;
+    }
 
 }
+
